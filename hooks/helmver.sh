@@ -105,8 +105,29 @@ chart_path() {
 
 check_chart_version() {
 	local -r changed_file_chart_path="$1/Chart.yaml"
+	local -r diff=$(git diff -U0 origin/master $changed_file_chart_path | grep '^[+-]' | grep -Ev '^(--- a/|\+\+\+ b/)')
 
-	debug "Checking directory $changed_file_chart_path"
+	debug "Checking Chart.yaml path $changed_file_chart_path"
+	if [[ -f "$changed_file_dir/Chart.yaml" ]]; then
+	    debug "Chart path found: $changed_file_dir"
+	    echo "$changed_file_dir"
+	    return 0
+	fi
+
+	if git diff-index --quiet HEAD $changed_file_chart_path; then
+		debug "Changes found in chart, but not found to Chart.yaml "
+    	echo "$changed_file_chart_path"
+    	return 1
+	else
+		local -r count=$(echo $diff | grep -o version | wc -l)
+		if [[ $count -eq "2" ]]; then
+	    	return 0
+	    else
+	    	echo "Version wasn't changed in $changed_file_chart_path"
+	    	return 1
+	    fi
+	fi
+
 
 }
 # An array to keep track of which charts we already linted

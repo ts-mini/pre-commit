@@ -89,7 +89,7 @@
   require_serial: true
 
 - id: helmver
-  name: helmver
+  name: Helm Chart Version Increment
   description: Run helm Chart.yaml semver check
   entry: hooks/helmver.sh
   language: script
