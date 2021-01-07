@@ -115,7 +115,7 @@ check_chart_version() {
 	fi
 
 	if git diff-index --quiet HEAD $changed_file_chart_path; then
-		debug "Changes found in chart, but not found to Chart.yaml "
+		debug "Changes found in chart, but no changes found to Chart.yaml"
     	echo "$changed_file_chart_path"
     	return 1
 	else
