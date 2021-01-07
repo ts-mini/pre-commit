@@ -88,6 +88,14 @@
   files: \.((ya?ml)|(tpl))$
   require_serial: true
 
+- id: helmver
+  name: helmver
+  description: Run helm Chart.yaml semver check
+  entry: hooks/helmver.sh
+  language: script
+  files: \.((ya?ml)|(tpl))$
+  require_serial: true
+
 - id: markdown-link-check
   name: markdown-link-check
   description: Run markdown-link-check to check all the relative and absolute links in markdown docs.
