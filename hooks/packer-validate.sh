@@ -7,10 +7,14 @@ set -e
 # workaround to allow GitHub Desktop to work, add this (hopefully harmless) setting here.
 export PATH=$PATH:/usr/local/bin
 
-readonly STYLE="{BASED_ON_STYLE: google, ALIGN_CLOSING_BRACKET_WITH_VISUAL_INDENT: true, COLUMN_LIMIT: 120, BLANK_LINE_BEFORE_NESTED_CLASS_OR_DEF: true, COALESCE_BRACKETS: false, DEDENT_CLOSING_BRACKETS: true, SPLIT_BEFORE_DOT: true, SPLIT_COMPLEX_COMPREHENSION: true}"
+# Store and return last failure from validate so this can validate every directory passed before exiting
+VALIDATE_ERROR=0
 
-for file in "$@"; do
-  if [[ "$file" =~ \.py$ ]]; then
-    yapf -ri --style="$STYLE" "$file"
-  fi
+for dir in $(echo "$@" | xargs -n1 dirname | sort -u | uniq); do
+  echo "--> Running 'packer validate -syntax-only' in directory '$dir'"
+  pushd "$dir" >/dev/null
+  packer validate -syntax-only . || VALIDATE_ERROR=$?
+  popd >/dev/null
 done
+
+exit ${VALIDATE_ERROR}
